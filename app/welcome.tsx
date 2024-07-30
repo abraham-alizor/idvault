@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, StyleSheet, Platform, View, Text } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -12,12 +12,15 @@ import {
   welcome_3,
 } from "@/assets/images";
 import Button from "@/components/Button";
+
 import { useRouter } from "expo-router";
+
 export default function WelcomeScreen() {
   const router = useRouter();
   const handlePress = () => {
     router.push("/login");
   };
+
   return (
     <View style={styles.container}>
       <PagerView style={styles.container} initialPage={0}>

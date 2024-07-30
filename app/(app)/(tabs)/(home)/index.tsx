@@ -36,6 +36,7 @@ export default function HomeScreen() {
       }
     })();
   }, [minutes, seconds]);
+
   return (
     <ParallaxScrollView
       childrenClassName="bg-neutral-bg"
@@ -86,7 +87,7 @@ export default function HomeScreen() {
               type="defaultSemiBold"
               className="text-center text-brand ml-2"
             >
-              {minutes} {seconds}
+              {minutes} : {seconds}
             </ThemedText>
           </ThemedView>
 
