@@ -8,12 +8,12 @@ import { Redirect, Slot, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import { ToastProvider } from "react-native-toast-notifications";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import React from "react";
 
 import { SessionProvider, useSession } from "@/context/ContextProvider";
-import { initialize } from "rn-smile-id";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,9 +22,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-  useEffect(() => {
-    initialize().then(() => console.log("Smile ID Initialized"));
-  }, []);
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -37,39 +35,41 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SessionProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="(app)" />
-          <Stack.Screen
-            name="welcome"
-            options={{
+      <ToastProvider>
+        <SessionProvider>
+          <Stack
+            screenOptions={{
               headerShown: false,
             }}
-          />
-          <Stack.Screen
-            name="login"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="verify-photo"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="photo-capture"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
-      </SessionProvider>
+          >
+            <Stack.Screen name="(app)" />
+            <Stack.Screen
+              name="welcome"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="verify-photo"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="photo-capture"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </SessionProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

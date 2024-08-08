@@ -22,7 +22,7 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} className="bg-white">
       <PagerView style={styles.container} initialPage={0}>
         <ThemedView key="1">
           <Image

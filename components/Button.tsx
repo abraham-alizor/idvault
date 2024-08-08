@@ -13,6 +13,7 @@ const Button = ({
   title,
   onPress,
   isFull = false,
+  activityLoading = false,
   className,
   icon = undefined,
 }: {
@@ -21,6 +22,7 @@ const Button = ({
   isFull?: boolean;
   className?: string;
   icon?: any;
+  activityLoading?: boolean;
 }) => {
   return (
     <ThemedView>
@@ -28,9 +30,13 @@ const Button = ({
         onPress={onPress}
         className={`bg-[#008643] ${
           isFull ? "w-full" : "w-[90%]"
-        } py-5 my-8 mx-auto rounded-lg  ${className}`}
+        } py-5 mt-8 mb-4 mx-auto rounded-lg  ${className}`}
       >
-        <Text className="text-white text-center">{title}</Text>
+        {activityLoading ? (
+          <ActivityIndicator color={"#FFF"} />
+        ) : (
+          <Text className="text-white text-center">{title}</Text>
+        )}
       </TouchableOpacity>
     </ThemedView>
   );

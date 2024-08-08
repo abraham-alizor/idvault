@@ -36,7 +36,7 @@ export default function HomeScreen() {
       }
     })();
   }, [minutes, seconds]);
-
+  // signOut();
   return (
     <ParallaxScrollView
       childrenClassName="bg-neutral-bg"

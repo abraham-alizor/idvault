@@ -6,13 +6,17 @@ import { useRouter } from "expo-router";
 const AuthContext = createContext<{
   signIn: () => void;
   signOut: () => void;
+  setDataState: (data: any) => void;
   session?: string | null;
   isLoading: boolean;
+  data: any | null;
 }>({
   signIn: () => null,
   signOut: () => null,
+  setDataState: () => null,
   session: null,
   isLoading: false,
+  data: null,
 });
 
 export function useSession() {
@@ -27,6 +31,7 @@ export function useSession() {
 
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
+  const [[loading, data], setData] = useStorageState("data");
   const router = useRouter();
   return (
     <AuthContext.Provider
@@ -39,6 +44,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
           setSession(null);
           router.push("/welcome");
         },
+        setDataState: (data: string | null) => {
+          return setData(data);
+        },
+        data,
         session,
         isLoading,
       }}

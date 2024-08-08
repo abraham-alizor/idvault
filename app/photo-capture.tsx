@@ -38,7 +38,10 @@ export default function PhotoCapture() {
 
   const onSubmit = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 1,
+        base64: true,
+      });
       if (photo) {
         router.replace({
           pathname: "/verify-photo",
