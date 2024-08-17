@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Text,
+  Pressable,
 } from "react-native";
 import DateTimePicker, {
   DateTimePickerAndroid,
@@ -15,46 +16,33 @@ import { ExternalLink } from "@/components/ExternalLink";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { avatar, calender } from "@/assets/images";
+import { avatar, calender, gtb } from "@/assets/images";
 import FormTextInput from "@/components/FormInput";
 import Button from "@/components/Button";
+import { useRouter } from "expo-router";
+import useFilterDateModal from "@/components/modals/FilterDateModal";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import FilterDate from "@/components/FilterDate";
 
 export default function TabTwoScreen() {
   const [active, setActive] = useState(1);
-
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [date, setDate] = useState(false);
   const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
-  const onChange = (event: any, selectedDate: any) => {
-    if (Platform.OS === "android") {
-      const currentDate = selectedDate;
-      setDate(currentDate);
-    } else {
-      const currentDate = selectedDate;
-      setShow(false);
-      setDate(currentDate);
-    }
-  };
+  const router = useRouter();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
-  const showMode = (currentMode: string) => {
-    if (Platform.OS === "android") {
-      DateTimePickerAndroid.open({
-        value: date,
-        onChange,
-        mode: currentMode,
-        is24Hour: true,
-      });
-    } else {
-      setShow(true);
-      setMode(currentMode);
-    }
-  };
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
 
-  const showDatepicker = () => {
-    setShow(true);
-  };
-
-  console.log(date);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
 
   return (
     <ParallaxScrollView
@@ -98,7 +86,7 @@ export default function TabTwoScreen() {
         <ThemedView className="bg-white p-4">
           <ThemedView className="flex justify-between items-center flex-row">
             <FormTextInput
-              className="rounded-full bg-[#F2F2F2] py-4 h-10 px-4 w-[80%]"
+              className="rounded-full bg-[#F2F2F2] py-3 px-4 w-[80%]"
               placeholder="Enter your NIN Number"
               // onChangeText={onChange}
               // value={value}
@@ -108,49 +96,114 @@ export default function TabTwoScreen() {
             />
             <TouchableOpacity
               className="bg-neutral-bg  rounded-full w-12 h-12 flex justify-center flex-row items-center"
-              onPress={showDatepicker}
+              onPress={handlePresentModalPress}
             >
               <Image source={calender} className="h-6 w-6" />
             </TouchableOpacity>
           </ThemedView>
-          {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={"date"}
-              is24Hour={true}
-              onChange={onChange}
-            />
+
+          {date && (
+            <ThemedView className="bg-[#F2F2F2] my-4 py-2 px-4 rounded-3xl flex-row justify-between items-center">
+              <ThemedText>
+                {startDate.toDateString()} - {endDate.toDateString()}
+              </ThemedText>
+              <TouchableOpacity
+                onPress={() => {
+                  setDate(false);
+                }}
+              >
+                <Text className="text-2xl">×</Text>
+              </TouchableOpacity>
+            </ThemedView>
           )}
+          <Pressable onPress={() => router.push("view-details")}>
+            <ThemedView className="w-full flex flex-row justify-between items-center my-4">
+              <ThemedView className="flex-row justify-start gap-x-4 items-center w-[80%]">
+                <ThemedView className="bg-brand w-1 h-16" />
+                <ThemedView>
+                  <ThemedText className="font-bold text-[17px]">
+                    Guaranteed Trust bank
+                  </ThemedText>
+                  <ThemedText className="text-gray-400">
+                    Account Opening
+                  </ThemedText>
+                  <ThemedText>26-July-2024</ThemedText>
+                </ThemedView>
+              </ThemedView>
+              <ThemedView>
+                <Image source={gtb} className="h-12 w-12 rounded-full" />
+              </ThemedView>
+            </ThemedView>
+          </Pressable>
         </ThemedView>
       ) : (
         <>
-          <ThemedView className="bg-white justify-between flex-wrap  py-4 rounded-lg px-2 ">
-            <Collapsible title="File-based routing">
-              <ThemedText>
-                This app has two screens:{" "}
-                <ThemedText type="defaultSemiBold">
-                  app/(tabs)/index.tsx
-                </ThemedText>{" "}
-                and{" "}
-                <ThemedText type="defaultSemiBold">
-                  app/(tabs)/explore.tsx
+          <ThemedView className="bg-white p-4">
+            <ThemedView className="flex justify-between items-center flex-row">
+              <FormTextInput
+                className="rounded-full bg-[#F2F2F2] py-3 px-4 w-[80%]"
+                placeholder="Enter your NIN Number"
+                // onChangeText={onChange}
+                // value={value}
+
+                keyboardType="number-pad"
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                className="bg-neutral-bg  rounded-full w-12 h-12 flex justify-center flex-row items-center"
+                onPress={handlePresentModalPress}
+              >
+                <Image source={calender} className="h-6 w-6" />
+              </TouchableOpacity>
+            </ThemedView>
+
+            {date && (
+              <ThemedView className="bg-[#F2F2F2] my-4 py-2 px-4 rounded-3xl flex-row justify-between items-center">
+                <ThemedText>
+                  {startDate.toDateString()} - {endDate.toDateString()}
                 </ThemedText>
-              </ThemedText>
-              <ThemedText>
-                The layout file in{" "}
-                <ThemedText type="defaultSemiBold">
-                  app/(tabs)/_layout.tsx
-                </ThemedText>{" "}
-                sets up the tab navigator.
-              </ThemedText>
-              <ExternalLink href="https://docs.expo.dev/router/introduction">
-                <ThemedText type="link">Learn more</ThemedText>
-              </ExternalLink>
-            </Collapsible>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDate(false);
+                  }}
+                >
+                  <Text className="text-2xl">×</Text>
+                </TouchableOpacity>
+              </ThemedView>
+            )}
+            <Pressable onPress={() => router.push("view-details")}>
+              <ThemedView className="w-full flex flex-row justify-between items-center my-4">
+                <ThemedView className="flex-row justify-start gap-x-4 items-center w-[80%]">
+                  <ThemedView className="bg-brand w-1 h-16" />
+                  <ThemedView>
+                    <ThemedText className="font-bold text-[17px]">
+                      Guaranteed Trust bank
+                    </ThemedText>
+                    <ThemedText className="text-gray-400">
+                      Account Opening
+                    </ThemedText>
+                    <ThemedText>26-July-2024</ThemedText>
+                  </ThemedView>
+                </ThemedView>
+                <ThemedView>
+                  <Image source={gtb} className="h-12 w-12 rounded-full" />
+                </ThemedView>
+              </ThemedView>
+            </Pressable>
           </ThemedView>
         </>
       )}
+      <FilterDate
+        {...{
+          startDate,
+          setStartDate,
+          endDate,
+          setEndDate,
+          setDate,
+        }}
+        handleSheetChanges={handleSheetChanges}
+        bottomSheetModalRef={bottomSheetModalRef}
+      />
     </ParallaxScrollView>
   );
 }

@@ -55,14 +55,14 @@ export default function PhotoCapture() {
     <Container
       headerBackgroundColor={{ light: "#FFF", dark: "#FFF" }}
       headerImage={
-        <View className="flex justify-between items-center flex-row">
+        <View className="mt-12 flex justify-between items-center flex-row">
           <BackButton />
           <TouchableOpacity
             onPress={() => {
               flash === "on" ? setFlash("off") : setFlash("on");
             }}
             className={
-              "mt-12 mr-5 bg-light-green rounded-full p-1 flex justify-center items-center"
+              " mr-5 bg-light-green rounded-full p-1 flex justify-center items-center"
             }
           >
             {flash === "off" ? (

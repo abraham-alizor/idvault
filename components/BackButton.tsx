@@ -6,10 +6,7 @@ import { useRouter } from "expo-router";
 const BackButton = (props: any) => {
   const router = useRouter();
   return (
-    <TouchableOpacity
-      onPress={() => router.back()}
-      style={{ marginTop: 50, marginLeft: 20 }}
-    >
+    <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 20 }}>
       <Ionicons
         name="chevron-back"
         size={28}

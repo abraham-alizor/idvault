@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { generateSignature } from "@/utils/functions/auth";
@@ -80,15 +80,14 @@ export default function Login() {
       if (response) {
         setDataState(response?.data);
         setLoading(false);
-        toast.show("NIN Verified Successfully"),
-          {
-            type: "success",
-            placement: "bottom",
-            duration: 4000,
-            offset: 30,
-            animationType: "zoom-in",
-          };
-        router.push("verify-photo");
+        toast.show("NIN Verified Successfully", {
+          type: "success",
+          placement: "bottom",
+          duration: 4000,
+
+          animationType: "zoom-in",
+        }),
+          router.push("verify-photo");
       } else {
         setLoading(false);
         console.error("Error submitting data:", response);
@@ -104,7 +103,11 @@ export default function Login() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#FFF", dark: "#FFF" }}
-      headerImage={<BackButton />}
+      headerImage={
+        <View className="mt-12">
+          <BackButton />
+        </View>
+      }
       childrenClassName={"bg-white"}
     >
       <ThemedView>

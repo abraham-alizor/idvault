@@ -46,7 +46,11 @@ export default function QrCodeScanner() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#FFF", dark: "#FFF" }}
-      headerImage={<BackButton />}
+      headerImage={
+        <View className="mt-12">
+          <BackButton />
+        </View>
+      }
     >
       <ThemedView className="bg-red-500">
         <ThemedText type="title" style={{ textAlign: "left" }}>

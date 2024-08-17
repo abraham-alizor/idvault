@@ -38,6 +38,12 @@ export default function ConsentLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="OtpPage"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </ProtectedRoutes>
   );

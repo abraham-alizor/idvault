@@ -1,75 +1,201 @@
 import React from "react";
-import { Image, StyleSheet, Platform } from "react-native";
-
-import { HelloWave } from "@/components/HelloWave";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Switch,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import {
+  Feather,
+  FontAwesome6,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { avatar, QR_bg, QR_icon, qrgreen } from "@/assets/images";
+import BackButton from "@/components/BackButton";
+import { useSession } from "@/context/ContextProvider";
 
-export default function HomeScreen() {
+const ProfileItem = ({
+  icon,
+  title,
+  showArrow = true,
+  isSwitch = false,
+  onPress,
+  IconComponent = Ionicons,
+}: {
+  icon: any;
+  title: any;
+  showArrow?: any;
+  isSwitch?: any;
+  onPress?: any;
+  IconComponent?: any;
+}) => (
+  <TouchableOpacity style={styles.item} onPress={onPress}>
+    <View style={styles.itemLeft}>
+      <View className="bg-[#EDEFEC] h-10 w-10 flex justify-center items-center rounded-full mr-4">
+        <IconComponent name={icon} size={24} color="#666" />
+      </View>
+      <Text style={styles.itemTitle}>{title}</Text>
+    </View>
+    {isSwitch ? (
+      <Switch />
+    ) : showArrow ? (
+      <Ionicons name="chevron-forward" size={24} color="#666" />
+    ) : null}
+  </TouchableOpacity>
+);
+
+export default function Settings() {
+  const { signOut } = useSession();
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+      childrenClassName="bg-white"
+      headerBackgroundColor={{ light: "#FFF", dark: "#FFF" }}
       headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
+        <ThemedView className="mt-12 px-4 flex-row justify-between items-center ">
+          <BackButton />
+          <View className="">
+            <FontAwesome6 name="bell" size={24} color="#000" />
+          </View>
+        </ThemedView>
       }
     >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">SETTINGS!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: "cmd + d", android: "cmd + m" })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this
-          starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{" "}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+      <View style={styles.container}>
+        <View style={styles.profileHeader}>
+          <Image source={avatar} style={styles.profileImage} />
+          <Text style={styles.profileName}>Bisola Adegoke</Text>
+          <Text style={styles.lastLogin}>Last login • 23 July, 2024</Text>
+
+          <View>
+            <Image
+              source={QR_icon}
+              className="rounded-xl h-12  w-12 object-contain mt-4 "
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Legal and compliance</Text>
+
+          <ProfileItem
+            IconComponent={MaterialIcons}
+            icon="lock-outline"
+            title="Privacy policy"
+          />
+
+          <ProfileItem
+            IconComponent={MaterialCommunityIcons}
+            icon="file-document-outline"
+            title="Terms of service"
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Security</Text>
+
+          <ProfileItem
+            IconComponent={Feather}
+            icon="wifi-off"
+            title="Offline data sharing"
+          />
+          <ProfileItem
+            IconComponent={MaterialIcons}
+            icon="lock-outline"
+            title="Update PIN"
+          />
+          <ProfileItem icon="finger-print" title="Biometrics" isSwitch={true} />
+          <ProfileItem
+            IconComponent={Feather}
+            icon="smartphone"
+            title="Devices"
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Others</Text>
+
+          <ProfileItem
+            IconComponent={FontAwesome6}
+            icon="bell"
+            title="Notifications"
+          />
+          <ProfileItem
+            onPress={signOut}
+            IconComponent={MaterialIcons}
+            icon="logout"
+            title="Sign out"
+          />
+        </View>
+      </View>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 1,
+  },
+  profileHeader: {
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  profileName: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  lastLogin: {
+    color: "#666",
+    marginTop: 5,
+  },
+  qrCode: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+  },
+  section: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginLeft: 20,
+    marginBottom: 10,
+  },
+  item: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    justifyContent: "space-between",
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  itemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+
+  itemTitle: {
+    fontSize: 16,
   },
 });

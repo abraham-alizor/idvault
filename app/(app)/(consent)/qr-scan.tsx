@@ -68,7 +68,11 @@ export default function QrCodeScannerScreen() {
     <ParallaxScrollView
       childrenClassName="bg-black"
       headerBackgroundColor={{ light: "#000", dark: "#000" }}
-      headerImage={<BackButton />}
+      headerImage={
+        <View className="mt-12">
+          <BackButton />
+        </View>
+      }
     >
       <ThemedView className="flex-1 bg-black ">
         <Image source={qrgreen} className="h-20 w-20 mx-auto" />

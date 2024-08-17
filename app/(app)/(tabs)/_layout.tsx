@@ -25,6 +25,9 @@ export default function TabLayout() {
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
           headerShown: false,
+          tabBarStyle: {
+            height: 60,
+          },
         }}
       >
         <Tabs.Screen
@@ -35,7 +38,7 @@ export default function TabLayout() {
               <ThemedView
                 className={`${
                   focused ? "bg-[#E0FFE8]" : ""
-                }  flex justify-center items-center rounded-2xl px-4 py-1 my-2`}
+                }  flex justify-center items-center rounded-2xl px-4 py-2 my-2`}
               >
                 <Image
                   source={focused ? home_active : home}

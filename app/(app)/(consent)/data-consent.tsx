@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Image,
   StyleSheet,
   Platform,
   TouchableOpacity,
   Pressable,
+  View,
 } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
@@ -29,6 +30,9 @@ import Button from "@/components/Button";
 import useCountdown from "@/hooks/useCountDown";
 import { useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import RejectStatusModal from "@/components/modals/RejectStatusModal";
+import SharedStatusModal from "@/components/modals/SharedStatusModal";
 
 export default function DataConsentScreen() {
   const { signOut } = useSession();
@@ -63,11 +67,28 @@ export default function DataConsentScreen() {
     setCheckedSignature(!isCheckedSignature);
   };
 
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetRejectModalRef = useRef<BottomSheetModal>(null);
+  // callbacks
+  const handlePresentRejectModalPress = useCallback(() => {
+    bottomSheetRejectModalRef.current?.present();
+  }, []);
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    // console.log("handleSheetChanges", index);
+  }, []);
   return (
     <ParallaxScrollView
       childrenClassName="bg-neutral-bg"
       headerBackgroundColor={{ light: "#F5F4F3", dark: "#F5F4F3" }}
-      headerImage={<BackButton />}
+      headerImage={
+        <View className="mt-12">
+          <BackButton />
+        </View>
+      }
     >
       <ThemedView className="">
         <ThemedText type="title">Consent</ThemedText>
@@ -199,7 +220,7 @@ export default function DataConsentScreen() {
       <ThemedView className="flex-row justify-between items-center ">
         <TouchableOpacity
           onPress={() => {
-            setActive(1);
+            handlePresentRejectModalPress();
           }}
           className={
             "py-4 px-4 w-[48%] my-2 mx-auto rounded-lg  bg-white border border-red-600"
@@ -211,7 +232,7 @@ export default function DataConsentScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setActive(2);
+            handlePresentModalPress();
           }}
           className={"py-4 px-4 w-[48%] my-2 mx-auto rounded-lg bg-brand"}
         >
@@ -220,6 +241,17 @@ export default function DataConsentScreen() {
           </ThemedText>
         </TouchableOpacity>
       </ThemedView>
+
+      <RejectStatusModal
+        bottomSheetModalRef={bottomSheetRejectModalRef}
+        handlePresentModalPress={handlePresentRejectModalPress}
+        handleSheetChanges={handleSheetChanges}
+      />
+      <SharedStatusModal
+        bottomSheetModalRef={bottomSheetModalRef}
+        handlePresentModalPress={handlePresentModalPress}
+        handleSheetChanges={handleSheetChanges}
+      />
     </ParallaxScrollView>
   );
 }

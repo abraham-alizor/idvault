@@ -17,6 +17,7 @@ import * as FileSystem from "expo-file-system";
 import { zip } from "react-native-zip-archive";
 import axios from "axios";
 import { useToast } from "react-native-toast-notifications";
+import Login from "./login";
 
 const ZipImages = async (imageUris: any[], setZipData: any) => {
   try {
@@ -31,10 +32,8 @@ const ZipImages = async (imageUris: any[], setZipData: any) => {
     const result = await zip(imageUris, zipPath);
     setZipData(result);
     // Handle success
-    Alert.alert("Success", `ZIP file created at: ${result}`);
   } catch (error) {
     // Handle error
-    Alert.alert("Error", `Failed to create ZIP file: ${error.message}`);
   }
 };
 export default function VerifyPhoto() {
@@ -71,7 +70,6 @@ export default function VerifyPhoto() {
       Alert.alert("No Images", "Please capture some images first.");
     }
   };
-  console.log(params?.uri);
 
   useEffect(() => {
     if (params?.uri !== undefined) {
@@ -91,41 +89,65 @@ export default function VerifyPhoto() {
       file_name: "selfie",
     });
     setLoading(true);
+
     try {
       const response = await axios.post(
         "https://api.smileidentity.com/v1/upload",
         {
           source_sdk: "rest_api",
           source_sdk_version: "1.0.0",
-          model_parameters: {},
+
+          smile_client_id: "100",
           file_name: "selfie.zip",
           sec_key:
             "KkAmo8wNajWV76AiqvcfZt2sQ7CSF1ncS3moUVDZx6aUt6Q0vQyjRJAm/TThw6RMohB3VVpKTZfzUgS8zA4an1aud+/jYPDUekQfaS8b2K59IPxFEbYX0YbF24si2+dIjxn36Z/+Y8g4I4zOo9sBKvkAngvNOwJGr2G6i26R5co=|9db44506f4e19e281e3a24583c3ad3b7500441d1c5e0acee4f9a07ea655614ec",
 
           timestamp: "1652877946",
           partner_params: {
-            user_id: `user-${"1"}`,
+            user_id: new Date().toISOString(),
             job_id: "",
             job_type: 4,
           },
-
-          callback_url: "",
-          partner_id: "100",
+          model_parameters: {},
+          callback_url: "{{callback_url}}",
         }
       );
 
       if (response) {
+        console.log(response?.data?.upload_url);
+        const payload = {
+          package_information: {
+            apiVersion: {
+              buildNumber: 0,
+              majorVersion: 2,
+              minorVersion: 0,
+            },
+          },
+          images: [
+            {
+              image_type_id: 1,
+              image: zipData,
+              file_name: "selfie",
+            },
+          ],
+        };
+
         setLoading(false);
-        console.log(response?.upload_url);
-        const upload = await axios.put(response?.upload_url, formData, {
+        const upload = await axios.put(response?.data?.upload_url, payload, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
 
         if (upload) {
-          console.log(upload);
-          toast.show("Request verification failed", { type: "success" });
+          toast.show("Photo Uploaded Successfully", {
+            type: "success",
+            placement: "bottom",
+            duration: 4000,
+            animationType: "zoom-in",
+          });
+
+          signIn();
         }
       } else {
         setLoading(false);
@@ -146,7 +168,11 @@ export default function VerifyPhoto() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#FFF", dark: "#FFF" }}
-      headerImage={<BackButton />}
+      headerImage={
+        <View className="mt-12">
+          <BackButton />
+        </View>
+      }
     >
       <ThemedView className="" style={{ flex: 0.9 }}>
         <ThemedText type="title" style={{ textAlign: "left" }}>

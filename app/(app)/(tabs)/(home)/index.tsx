@@ -181,7 +181,7 @@ export default function HomeScreen() {
                 </ThemedText>
                 <TouchableOpacity
                   onPress={() => {
-                    router.push("qr-scan");
+                    router.push("(consent)/OtpPage");
                   }}
                   className={`border-brand border py-3 px-4 my-2 w-44 rounded-lg `}
                 >
